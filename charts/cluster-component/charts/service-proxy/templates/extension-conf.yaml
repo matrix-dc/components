@@ -1,0 +1,37 @@
+---
+#TODO: update extention.conf from .values
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-config
+  namespace: {{ .Release.Namespace }}
+data:
+  domain.json: '{"externalip":"","domain":""}'
+  extension.conf: |
+    {
+      "nodes": [
+      {{- $proxyNodes := list }}
+      {{- range $idx, $val := .Values.proxyNodes }}
+      {{- $proxyNode := dict "host" $val.nodeName "address" $val.ip "ipv6_address" "" "group" $.Values.groupName }}
+      {{- $proxyNodes = append $proxyNodes $proxyNode }}
+      {{- end }}
+      {{- range $idx, $node := $proxyNodes }}
+        {
+          "host": "{{ $node.host }}",
+          "address": "{{ $node.address }}",
+          "ipv6_address": "{{ $node.ipv6_address }}",
+          "group": "{{ $.Values.groupName }}"
+        }{{ if ne (add1 $idx) (len $proxyNodes) }},{{ end }}
+      {{- end }}
+      ],
+      "groups": [
+        {
+          "id": "{{ $.Values.groupName }}",
+          "name": "gpu-service-proxy",
+          "type": "public",
+          "address": "{{ $.Values.publicIP }}",
+          "domain": "{{ $.Values.publicDomain }}",
+          "is_default": true,
+        }
+      ]
+    }
