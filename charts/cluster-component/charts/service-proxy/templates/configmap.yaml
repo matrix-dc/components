@@ -43,7 +43,7 @@ data:
 
     {{with .DefaultHTTP}}
     listen defaulthttp
-        bind {{$.PublicIP}}:80
+        bind {{$.PublicIP}}:8080
         mode http
         option forwardfor       except 127.0.0.0/8
         errorfile 503 /etc/haproxy/errors/503.http{{range .Redirect}}{{if not .PreferIPv6}}
@@ -53,7 +53,7 @@ data:
 
     {{if .PublicIPv6 }}{{with .DefaultHTTP}}
     listen defaulthttp-ipv6
-        bind {{$.PublicIPv6}}:80
+        bind {{$.PublicIPv6}}:8080
         mode http
         option forwardfor
         errorfile 503 /etc/haproxy/errors/503.http{{range .Redirect}}{{if .PreferIPv6}}
@@ -66,7 +66,7 @@ data:
         mode http
         option forwardfor       except 127.0.0.0/8
         errorfile 503 /etc/haproxy/errors/503.http
-        bind {{$.PublicIP}}:443 ssl crt {{.DefaultSSLCert}}{{range .SSLCerts}} crt {{.}}{{end}}{{range .Domains}}{{if not .PreferIPv6}}
+        bind {{$.PublicIP}}:8443 ssl crt {{.DefaultSSLCert}}{{range .SSLCerts}} crt {{.}}{{end}}{{range .Domains}}{{if not .PreferIPv6}}
         acl {{.BackendName}} hdr(host) -i {{range .DomainNames}} {{.}}{{end}}
         use_backend {{.BackendName}} if {{.BackendName}} { ssl_fc_sni{{range .DomainNames}} {{.}}{{end}} }{{end}}{{end}}{{end}}
 
@@ -75,7 +75,7 @@ data:
         mode http
         option forwardfor
         errorfile 503 /etc/haproxy/errors/503.http
-        bind {{$.PublicIPv6}}:443 ssl crt {{.DefaultSSLCert}}{{range .SSLCerts}} crt {{.}}{{end}}{{range .Domains}}{{if .PreferIPv6}}
+        bind {{$.PublicIPv6}}:8443 ssl crt {{.DefaultSSLCert}}{{range .SSLCerts}} crt {{.}}{{end}}{{range .Domains}}{{if .PreferIPv6}}
         acl {{.BackendName}} hdr(host) -i {{range .DomainNames}} {{.}}{{end}}
         use_backend {{.BackendName}} if {{.BackendName}} { ssl_fc_sni{{range .DomainNames}} {{.}}{{end}} }{{end}}{{end}}{{end}}{{end}}
 
