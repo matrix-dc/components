@@ -50,6 +50,9 @@ data:
       {{- end }}
     {{- end }}
     enablePasswordDB: true
+    expiry:
+      idTokens: "24h"
+      authRequests: "1h"
 #    staticPasswords:
 #    {{- range .Values.oidcServer.staticPasswords }}
 #    - email: {{ .email }}
