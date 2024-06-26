@@ -1,6 +1,18 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-certs
+  namespace: {{ .Release.Namespace }}
+data:
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-proxy-template
+  namespace: {{ .Release.Namespace }}
 data:
   haproxy.tpl: |
+    {{`
     global
         log 127.0.0.1 local2
         chroot /var/lib/haproxy
@@ -96,14 +108,4 @@ data:
     {{with .Backend}}{{range .}}
     backend {{.BackendName}}{{$port := .Port}}{{range .Pods}}
         server {{.Name}} {{.IP}}:{{$port}} cookie {{.Name}} check maxconn 5000{{end}}{{end}}{{end}}
-kind: ConfigMap
-metadata:
-  name: service-proxy-template
-  namespace: {{ .Release.Namespace }}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kube-certs
-  namespace: {{ .Release.Namespace }}
-data:
+    `}}

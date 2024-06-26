@@ -7,7 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   domain.json: '{"externalip":"","domain":""}'
-  extension.conf: |
+  extention.conf: |
     {
       "nodes": [
       {{- $proxyNodes := list }}
@@ -31,7 +31,7 @@ data:
           "type": "public",
           "address": "{{ $.Values.publicIP }}",
           "domain": "{{ $.Values.publicDomain }}",
-          "is_default": true,
+          "is_default": true
         }
       ]
     }
